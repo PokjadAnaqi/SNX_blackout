@@ -58,3 +58,48 @@ RegisterNetEvent("ss-blackout:blackoutoff", function()
     exports["qb-weathersync"]:setBlackout(false)
 end)
 
+RegisterCommand('blackoutactive', function(source)
+    if source ~= 0 and not IsPlayerAceAllowed(source, 'ss.blackout.active') then
+        TriggerClientEvent('QBCore:Notify', source, 'No permission', 'error')
+        return
+    end
+
+    if blackout then
+        if source ~= 0 then
+            TriggerClientEvent('QBCore:Notify', source, 'Blackout already active', 'error')
+        end
+        return
+    end
+
+    blackout = true
+    recentlyHit = false
+
+    TriggerEvent('ss-blackout:blackouton')
+
+    if source ~= 0 then
+        TriggerClientEvent('QBCore:Notify', source, 'Blackout activated', 'success')
+    end
+end, false)
+
+RegisterCommand('blackoutrestore', function(source)
+    if source ~= 0 and not IsPlayerAceAllowed(source, 'ss.blackout.restore') then
+        TriggerClientEvent('QBCore:Notify', source, 'No permission', 'error')
+        return
+    end
+
+    if not blackout then
+        if source ~= 0 then
+            TriggerClientEvent('QBCore:Notify', source, 'Blackout is not active', 'error')
+        end
+        return
+    end
+
+    blackout = false
+    recentlyHit = false
+
+    TriggerEvent('ss-blackout:blackoutoff')
+
+    if source ~= 0 then
+        TriggerClientEvent('QBCore:Notify', source, 'Blackout restored (lights on)', 'success')
+    end
+end, false)
